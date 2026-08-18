@@ -1,1 +1,186 @@
-<!doctype html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lab Hub</title><link rel="stylesheet" href="style.css"></head><body><header class="hero"><nav><b>LAB<span>HUB</span></b></nav><div class="hero-content"><small>ENGINEERING LABORATORY</small><h1>Lab<br><em>Hub</em></h1><p>Public laboratory experiments, code, screenshots and notes.</p><input id="search" placeholder="Search users..." type="search"></div></header><main><small>LAB USERS</small><h2>Choose a Lab</h2><div id="users" class="grid"></div></main><script src="config.js"></script><script src="app.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab Hub</title>
+
+<style>
+*{box-sizing:border-box}
+:root{
+    --bg:#0b0d12;
+    --panel:#12151d;
+    --text:#f4f6fa;
+    --muted:#9aa3b2;
+    --line:#292f3b;
+    --accent:#7c9cff;
+    --accent2:#a78bfa;
+}
+body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+.hero{
+    min-height:515px;
+    padding:25px 7vw 75px;
+    border-bottom:1px solid var(--line);
+    background:
+        radial-gradient(circle at 75% 20%,rgba(124,156,255,.18),transparent 35%),
+        radial-gradient(circle at 20% 80%,rgba(167,139,250,.10),transparent 35%);
+}
+nav{display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:900;letter-spacing:2px}
+.logo span{color:var(--accent)}
+.hero-content{max-width:850px;margin:90px auto 0;text-align:center}
+.eyebrow{
+    color:var(--accent);
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:2px;
+    margin:0 0 12px;
+}
+h1{
+    font-size:clamp(52px,8vw,90px);
+    line-height:.95;
+    letter-spacing:-4px;
+    margin:0;
+}
+h1 span{
+    color:var(--accent);
+}
+.subtitle{color:var(--muted);font-size:18px;margin:24px 0 30px}
+#search{
+    width:min(650px,100%);
+    padding:17px 20px;
+    border-radius:16px;
+    border:1px solid var(--line);
+    background:var(--panel);
+    color:var(--text);
+    outline:none;
+    font-size:16px;
+}
+main{max-width:1100px;margin:auto;padding:55px 7vw}
+h2{font-size:34px;margin:0}
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:16px;
+    margin-top:28px;
+}
+.card{
+    display:block;
+    text-decoration:none;
+    color:var(--text);
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:26px;
+    transition:.2s;
+}
+.card:hover{transform:translateY(-3px);border-color:var(--accent)}
+.icon{font-size:36px;margin-bottom:18px}
+.card h3{font-size:23px;margin:0 0 8px}
+.card p{color:var(--muted);font-size:14px;line-height:1.5;margin:0}
+.slots{
+    display:inline-block;
+    margin-top:18px;
+    color:var(--accent);
+    font-size:12px;
+    font-weight:800;
+}
+.empty{color:var(--muted)}
+footer{
+    border-top:1px solid var(--line);
+    padding:25px 7vw;
+    color:var(--muted);
+    font-size:13px;
+}
+</style>
+</head>
+
+<body>
+
+<header class="hero">
+    <nav>
+        <div class="logo">LAB<span>HUB</span></div>
+    </nav>
+
+    <div class="hero-content">
+        <p class="eyebrow">ENGINEERING LABORATORY</p>
+        <h1>Lab<br><span>Hub</span></h1>
+        <p class="subtitle">
+            Public laboratory experiments, code, screenshots and notes.
+        </p>
+        <input id="search" type="search" placeholder="Search users...">
+    </div>
+</header>
+
+<main>
+    <p class="eyebrow">LAB USERS</p>
+    <h2>Choose a Lab</h2>
+    <div id="users" class="grid"></div>
+</main>
+
+<footer>
+    Public Lab Hub · 15 experiment slots per subject
+</footer>
+
+<script>
+const USERS = [
+    {
+        id: "aaditya",
+        name: "Aaditya",
+        icon: "👤",
+        subjects: [
+            {id:"vlsi", name:"VLSI", icon:"🔌"},
+            {id:"arm", name:"ARM", icon:"⚙️"},
+            {id:"os", name:"OS", icon:"💿"},
+            {id:"coa", name:"COA", icon:"💻"},
+            {id:"instrumentation", name:"Instrumentation", icon:"🤖"}
+        ]
+    },
+    {
+        id: "remmy",
+        name: "Remmy",
+        icon: "👤",
+        subjects: [
+            {id:"digital-electronics", name:"Digital Electronics", icon:"🔬"},
+            {id:"java", name:"Java", icon:"☕"}
+        ]
+    }
+];
+
+const box = document.getElementById("users");
+const search = document.getElementById("search");
+
+function renderUsers(query=""){
+    query = query.toLowerCase().trim();
+
+    const results = USERS.filter(user =>
+        user.name.toLowerCase().includes(query)
+    );
+
+    if(results.length === 0){
+        box.innerHTML = '<p class="empty">No users found.</p>';
+        return;
+    }
+
+    box.innerHTML = results.map(user => `
+        <a class="card" href="users/${user.id}/index.html">
+            <div class="icon">${user.icon}</div>
+            <h3>${user.name}</h3>
+            <p>${user.subjects.length} subjects · 15 experiments per subject</p>
+            <span class="slots">Open ${user.name}'s Lab →</span>
+        </a>
+    `).join("");
+}
+
+search.addEventListener("input", e => renderUsers(e.target.value));
+
+renderUsers();
+</script>
+
+</body>
+</html>
